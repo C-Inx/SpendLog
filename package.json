@@ -1,0 +1,17 @@
+{
+  "name": "spendlog",
+  "version": "1.0.0",
+  "description": "SpendLog - a personal expense tracker with reports",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node test.js"
+  },
+  "engines": { "node": ">=18" },
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.3.0",
+    "mongodb": "^6.18.0"
+  }
+}
