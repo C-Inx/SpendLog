@@ -17,7 +17,7 @@
       <h2>Add expense</h2>
       <form id="expense-form" novalidate>
         <label>Date <input type="date" id="f-date" required /></label>
-        <label class="grow">Description <textarea id="f-desc" maxlength="200" rows="3" placeholder="e.g. Jollibee lunch" required></textarea></label>
+        <label class="grow">Description <textarea id="f-desc" maxlength="200" rows="1" placeholder="e.g. Jollibee lunch" required></textarea></label>
         <label>Category
           <select id="f-cat" required>
             <option value="" disabled selected>Select category</option>
@@ -62,6 +62,7 @@
         <span id="pg-info"></span>
         <button type="button" class="ghost" id="pg-next">Next</button>
       </div>
+      <p class="grand">Total in selected range: <strong id="grand">₱0.00</strong></p>
     </section>
 
     <div class="reports">
@@ -88,7 +89,6 @@
       </section>
     </div>
 
-    <p class="grand">Total in selected range: <strong id="grand">₱0.00</strong></p>
   </main>
 
   <script src="config.js"></script>
