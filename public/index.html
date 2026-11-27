@@ -15,12 +15,23 @@
   <main>
     <section class="card">
       <h2>Add expense</h2>
-      <form id="expense-form" novalidate>
+      <form id="expense-form">
         <label>Date <input type="date" id="f-date" required /></label>
-        <label class="grow">Description <input type="text" id="f-desc" maxlength="200" placeholder="e.g. Jollibee lunch" required /></label>
-        <label>Category <input type="text" id="f-cat" list="cat-list" maxlength="50" placeholder="e.g. Food" required /></label>
-        <datalist id="cat-list"></datalist>
-        <label>Amount (₱) <input type="number" id="f-amt" min="0.01" step="0.01" placeholder="0.00" required /></label>
+        <label class="grow">Description <textarea id="f-desc" maxlength="200" rows="2" placeholder="e.g. Jollibee lunch" required></textarea></label>
+        <label>Category
+          <select id="f-cat" required>
+            <option value="" selected disabled>Select a category</option>
+            <option>Food</option>
+            <option>Transport</option>
+            <option>Bills</option>
+            <option>Shopping</option>
+            <option>Health</option>
+            <option>Entertainment</option>
+            <option>Education</option>
+            <option>Other</option>
+          </select>
+        </label>
+        <label>Amount (₱) <input type="number" id="f-amt" min="1" step="1" inputmode="numeric" placeholder="0" required /></label>
         <button type="submit">Add</button>
       </form>
       <p id="form-msg" class="msg" role="alert"></p>
@@ -46,6 +57,11 @@
           <tbody id="exp-body"></tbody>
         </table>
       </div>
+      <nav class="pagination" id="expense-pagination" aria-label="Expense pages" hidden>
+        <button type="button" id="prev-page" class="ghost">Previous</button>
+        <span id="page-indicator" aria-live="polite">Page 1 of 1</span>
+        <button type="button" id="next-page" class="ghost">Next</button>
+      </nav>
     </section>
 
     <div class="reports">

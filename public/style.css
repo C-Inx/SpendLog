@@ -1,6 +1,7 @@
 :root {
   --bg: #f5f6f8; --card: #ffffff; --text: #1d2330; --muted: #667085;
   --line: #e4e7ec; --accent: #0f766e; --accent-dark: #0b5c56; --danger: #b42318;
+  --page-gutter: 20px;
 }
 @media (prefers-color-scheme: dark) {
   :root { --bg: #11151c; --card: #1a2029; --text: #e8ecf2; --muted: #98a2b3;
@@ -9,27 +10,29 @@
 * { box-sizing: border-box; }
 body { margin: 0; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
        background: var(--bg); color: var(--text); }
-.top { padding: 28px 20px 8px; max-width: 1100px; margin: 0 auto; }
+.top { padding: 28px var(--page-gutter) 8px; max-width: 1100px; margin: 0 auto; }
 .top h1 { margin: 0; font-size: 28px; letter-spacing: -0.5px; }
 .top p { margin: 2px 0 0; color: var(--muted); }
-main { max-width: 1100px; margin: 0 auto; padding: 12px 20px 48px; display: grid; gap: 16px; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+main { max-width: 1100px; margin: 0 auto; padding: 12px var(--page-gutter) 48px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.card { min-width: 0; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
 h2 { margin: 0 0 12px; font-size: 16px; }
 .count { color: var(--muted); font-weight: 400; font-size: 13px; }
-form { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
-label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+form { min-width: 0; display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+label { min-width: 0; display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
 label.grow { flex: 1 1 220px; }
-input { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line);
+input, select, textarea { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line);
         border-radius: 8px; padding: 8px 10px; min-width: 0; }
-input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+textarea { min-height: 64px; resize: vertical; }
 button { font: inherit; font-weight: 600; cursor: pointer; border: 0; border-radius: 8px;
          padding: 9px 18px; background: var(--accent); color: #fff; }
 @media (prefers-color-scheme: dark) { button { color: #06201d; } }
 button:hover { background: var(--accent-dark); }
 button.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
 button.ghost:hover { background: var(--bg); }
-button.del { background: transparent; color: var(--danger); padding: 2px 8px; font-weight: 500; }
+button.del { background: transparent; color: var(--danger); padding: 8px 12px; font-weight: 600; }
 button.del:hover { background: var(--bg); }
+button:disabled { cursor: not-allowed; opacity: .55; }
 .msg { min-height: 1.2em; margin: 8px 0 0; color: var(--danger); font-size: 13px; }
 .msg.ok { color: var(--accent); }
 .note { margin: 0; color: var(--muted); font-size: 13px; }
@@ -44,3 +47,22 @@ th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: v
 .reports { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
 .reports .card { overflow-x: auto; }
 .grand { text-align: right; font-size: 17px; margin: 0; }
+.pagination { display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding-top: 14px; }
+.pagination[hidden] { display: none; }
+.pagination span { min-width: 92px; text-align: center; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 640px) {
+  :root { --page-gutter: 16px; }
+  .top { padding-top: 22px; }
+  main { padding-top: 10px; padding-bottom: 32px; gap: 12px; }
+  .card { padding: 16px; }
+  form { align-items: stretch; }
+  label, label.grow { flex: 1 1 100%; }
+  input, select, textarea { width: 100%; }
+  form > button { width: 100%; }
+  .reports { grid-template-columns: 1fr; gap: 12px; }
+  .pagination { justify-content: space-between; gap: 8px; }
+  .pagination button { padding: 8px 12px; }
+  button.del { width: auto; }
+  .grand { text-align: left; }
+}

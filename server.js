@@ -19,18 +19,40 @@ function readRange(query) {
   const end = query.end || '';
   if (start && !isValidDate(start)) return { error: 'Invalid start date.' };
   if (end && !isValidDate(end)) return { error: 'Invalid end date.' };
-  if (start && end && start > end) return { error: 'Start date must not be after end date.' };
+  if (start && end && start >= end) return { error: 'Start date must be earlier than end date.' };
   return { start, end };
+}
+
+function readPagination(query) {
+  const page = query.page === undefined ? 1 : Number(query.page);
+  const pageSize = query.pageSize === undefined ? 10 : Number(query.pageSize);
+  if (!Number.isSafeInteger(page) || page < 1 || page > 1000000)
+    return { error: 'Page must be a positive whole number.' };
+  if (!Number.isSafeInteger(pageSize) || pageSize < 1 || pageSize > 100)
+    return { error: 'Page size must be between 1 and 100.' };
+  return { page, pageSize };
 }
 
 function handleAsync(handler) {
   return (req, res, next) => Promise.resolve(handler(req, res, next)).catch(next);
 }
 
+app.get('/api/health', async (_req, res) => {
+  try {
+    await db.pingDatabase();
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('SpendLog health check failed:', error.message);
+    res.status(503).json({ ok: false });
+  }
+});
+
 app.get('/api/expenses', handleAsync(async (req, res) => {
   const range = readRange(req.query);
   if (range.error) return res.status(400).json({ error: range.error });
-  res.json(await db.listExpenses(range.start, range.end));
+  const pagination = readPagination(req.query);
+  if (pagination.error) return res.status(400).json({ error: pagination.error });
+  res.json(await db.listExpenses(range.start, range.end, pagination.page, pagination.pageSize));
 }));
 
 app.post('/api/expenses', handleAsync(async (req, res) => {
@@ -44,10 +66,10 @@ app.post('/api/expenses', handleAsync(async (req, res) => {
     return res.status(400).json({ error: 'Description is required (max 200 characters).' });
   if (!category || category.length > 50)
     return res.status(400).json({ error: 'Category is required (max 50 characters).' });
-  if (!Number.isFinite(amount) || amount <= 0 || amount > 1e9)
-    return res.status(400).json({ error: 'Amount must be a number greater than 0.' });
+  if (!Number.isSafeInteger(amount) || amount < 1 || amount > 1e9)
+    return res.status(400).json({ error: 'Amount must be a positive whole number.' });
 
-  const id = await db.addExpense({ date, description, category, amountCents: Math.round(amount * 100) });
+  const id = await db.addExpense({ date, description, category, amountCents: amount * 100 });
   res.status(201).json({ id });
 }));
 

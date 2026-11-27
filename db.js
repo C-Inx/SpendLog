@@ -19,7 +19,7 @@ async function expensesCollection() {
 
 const toMoney = (cents) => cents / 100;
 
-async function listExpenses(start, end) {
+async function listExpenses(start, end, page = 1, pageSize = 10) {
   const filter = {};
   if (start || end) {
     filter.date = {};
@@ -27,17 +27,27 @@ async function listExpenses(start, end) {
     if (end) filter.date.$lte = end;
   }
 
-  const rows = await (await expensesCollection())
-    .find(filter)
-    .sort({ date: -1, _id: -1 })
-    .toArray();
-  return rows.map((row) => ({
-    id: row._id.toString(),
-    date: row.date,
-    description: row.description,
-    category: row.category,
-    amount: toMoney(row.amountCents),
-  }));
+  const collection = await expensesCollection();
+  const [rows, total] = await Promise.all([
+    collection.find(filter)
+      .sort({ date: -1, _id: -1 })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .toArray(),
+    collection.countDocuments(filter),
+  ]);
+  return {
+    items: rows.map((row) => ({
+      id: row._id.toString(),
+      date: row.date,
+      description: row.description,
+      category: row.category,
+      amount: toMoney(row.amountCents),
+    })),
+    total,
+    page,
+    pageSize,
+  };
 }
 
 async function addExpense({ date, description, category, amountCents }) {
@@ -111,6 +121,11 @@ async function categories() {
   ]).toArray().then((rows) => rows.map((row) => row.category));
 }
 
+async function pingDatabase() {
+  await expensesCollection();
+  await client.db(databaseName).command({ ping: 1 });
+}
+
 async function close() {
   if (connection) {
     await client.close();
@@ -118,4 +133,4 @@ async function close() {
   }
 }
 
-module.exports = { listExpenses, addExpense, deleteExpense, reports, categories, close };
+module.exports = { listExpenses, addExpense, deleteExpense, reports, categories, pingDatabase, close };
