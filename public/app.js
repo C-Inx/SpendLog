@@ -128,8 +128,15 @@ $('exp-body').addEventListener('click', async (e) => {
   const btn = e.target.closest('button.del');
   if (!btn) return;
   if (!confirm('Delete this expense?')) return;
-  await api('/api/expenses/' + btn.dataset.id, { method: 'DELETE' });
-  await refresh();
+  btn.disabled = true;
+  try {
+    const result = await api('/api/expenses/' + encodeURIComponent(btn.dataset.id), { method: 'DELETE' });
+    await refresh();
+    if (!result.deleted) $('form-msg').textContent = 'This expense was already removed.';
+  } catch (err) {
+    btn.disabled = false;
+    $('form-msg').textContent = err.message;
+  }
 });
 
 // Default the date field to today (local time).

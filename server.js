@@ -53,7 +53,7 @@ app.post('/api/expenses', handleAsync(async (req, res) => {
 
 app.delete('/api/expenses/:id', handleAsync(async (req, res) => {
   const deleted = await db.deleteExpense(req.params.id);
-  res.status(deleted ? 200 : 404).json({ ok: deleted });
+  res.json({ ok: true, deleted });
 }));
 
 app.get('/api/reports', handleAsync(async (req, res) => {

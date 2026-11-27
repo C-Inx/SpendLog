@@ -62,6 +62,18 @@ async function run() {
     const rows = await get('/api/expenses');
     assert.strictEqual((await fetch(`${base}/api/expenses/${rows[0].id}`, { method: 'DELETE' })).status, 200);
     assert.strictEqual((await get('/api/expenses')).length, 4);
+
+    await cleanupClient.db(testDatabase).collection('expenses').insertOne({
+      _id: 'legacy-expense-1', date: '2026-11-20', description: 'Legacy record',
+      category: 'Other', amountCents: 100,
+    });
+    const legacy = (await get('/api/expenses')).find((row) => row.id === 'legacy-expense-1');
+    assert.ok(legacy);
+    assert.strictEqual((await fetch(`${base}/api/expenses/${legacy.id}`, { method: 'DELETE' })).status, 200);
+    const repeatedDelete = await fetch(`${base}/api/expenses/${legacy.id}`, { method: 'DELETE' });
+    assert.strictEqual(repeatedDelete.status, 200);
+    assert.deepStrictEqual(await repeatedDelete.json(), { ok: true, deleted: false });
+    assert.strictEqual((await get('/api/expenses')).length, 4);
     console.log('All tests passed.');
   } finally {
     await new Promise((resolve) => server.close(resolve));
