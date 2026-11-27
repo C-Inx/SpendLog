@@ -52,8 +52,9 @@ async function addExpense({ date, description, category, amountCents }) {
 }
 
 async function deleteExpense(id) {
-  if (!ObjectId.isValid(id)) return false;
-  const result = await (await expensesCollection()).deleteOne({ _id: new ObjectId(id) });
+  if (typeof id !== 'string' || !id || id.length > 128) return false;
+  const identifiers = ObjectId.isValid(id) ? [new ObjectId(id), id] : [id];
+  const result = await (await expensesCollection()).deleteOne({ _id: { $in: identifiers } });
   return result.deletedCount > 0;
 }
 
