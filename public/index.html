@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SpendLog</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="top">
+    <h1>SpendLog</h1>
+    <p>Personal expense tracker</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Add expense</h2>
+      <form id="expense-form" novalidate>
+        <label>Date <input type="date" id="f-date" required /></label>
+        <label class="grow">Description <textarea id="f-desc" maxlength="200" rows="3" placeholder="e.g. Jollibee lunch" required></textarea></label>
+        <label>Category
+          <select id="f-cat" required>
+            <option value="" disabled selected>Select category</option>
+            <option>Food</option>
+            <option>Transport</option>
+            <option>Bills</option>
+            <option>Shopping</option>
+            <option>Health</option>
+            <option>Education</option>
+            <option>Entertainment</option>
+            <option>Other</option>
+          </select>
+        </label>
+        <label>Amount (₱) <input type="number" id="f-amt" min="1" step="1" inputmode="numeric" placeholder="0" required /></label>
+        <button type="submit">Add</button>
+      </form>
+      <p id="form-msg" class="msg" role="alert"></p>
+    </section>
+
+    <section class="card">
+      <h2>Date range</h2>
+      <form id="filter-form" class="filter">
+        <label>Start date <input type="date" id="r-start" /></label>
+        <label>End date <input type="date" id="r-end" /></label>
+        <button type="submit">Apply</button>
+        <button type="button" id="r-clear" class="ghost">Clear</button>
+      </form>
+      <p id="range-msg" class="msg" role="alert"></p>
+      <p id="range-note" class="note"></p>
+    </section>
+
+    <section class="card">
+      <h2>Expenses <span class="count" id="exp-count"></span></h2>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Date</th><th>Description</th><th>Category</th><th class="num">Amount</th><th></th></tr></thead>
+          <tbody id="exp-body"></tbody>
+        </table>
+      </div>
+      <div class="pager" id="pager">
+        <button type="button" class="ghost" id="pg-prev">Previous</button>
+        <span id="pg-info"></span>
+        <button type="button" class="ghost" id="pg-next">Next</button>
+      </div>
+    </section>
+
+    <div class="reports">
+      <section class="card">
+        <h2>Category report</h2>
+        <table>
+          <thead><tr><th>Category</th><th class="num">Total</th></tr></thead>
+          <tbody id="rep-category"></tbody>
+        </table>
+      </section>
+      <section class="card">
+        <h2>Daily report</h2>
+        <table>
+          <thead><tr><th>Date</th><th class="num">Total</th></tr></thead>
+          <tbody id="rep-daily"></tbody>
+        </table>
+      </section>
+      <section class="card">
+        <h2>Monthly report</h2>
+        <table>
+          <thead><tr><th>Month</th><th class="num">Total</th></tr></thead>
+          <tbody id="rep-monthly"></tbody>
+        </table>
+      </section>
+    </div>
+
+    <p class="grand">Total in selected range: <strong id="grand">₱0.00</strong></p>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
